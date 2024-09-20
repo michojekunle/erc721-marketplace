@@ -9,7 +9,7 @@ import "@openzeppelin/contracts/utils/Pausable.sol";
 /// @title AMDNFTMarketplace
 /// @notice This contract represents an NFT marketplace allowing users to mint, buy, list, and transfer NFTs.
 /// @dev Includes gas optimizations, protection against reentrancy attacks, custom errors, safe Ether transfers, and pausing mechanisms.
-contract AMDNFTMarketplace is ERC721("Amd Xvm", "AXVM"), Ownable(msg.sender), ReentrancyGuard, Pausable {
+contract AmdXvmNFTMarketplace is ERC721("Amd Xvm", "AXVM"), Ownable(msg.sender), ReentrancyGuard, Pausable {
     uint256 private _tokenIds;
     uint256 public marketplaceFee = 0.000001 ether;
 

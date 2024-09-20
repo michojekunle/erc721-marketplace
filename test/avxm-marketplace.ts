@@ -6,12 +6,11 @@ const { ethers } = require("hardhat");
 describe("AMDNFTMarketplace", function () {
   async function deployMarketplaceFixture() {
     const [owner, buyer, recipient, otherAccount] = await ethers.getSigners();
-    const AMDNFTMarketplace = await ethers.getContractFactory("AMDNFTMarketplace");
-    const marketplace = await AMDNFTMarketplace.deploy();
-    await marketplace.deployed();
+    const AmdXvmNFTMarketplace = await ethers.getContractFactory("AmdXvmNFTMarketplace");
+    const marketplace = await AmdXvmNFTMarketplace.deploy();
 
-    const initialPrice = ethers.utils.parseEther("0.01");
-    const metadataURI = "https://example.com/nft-metadata";
+    const initialPrice = ethers.parseEther("0.01");
+    const metadataURI = "ipfs://QmNdGUgj81jfa21tyRHk2qAc2QRG8bbDnWtSzvzJicwtra";
 
     return { marketplace, owner, buyer, recipient, otherAccount, initialPrice, metadataURI };
   }
@@ -20,7 +19,7 @@ describe("AMDNFTMarketplace", function () {
     it("Should set the correct marketplace fee", async function () {
       const { marketplace } = await loadFixture(deployMarketplaceFixture);
       const fee = await marketplace.marketplaceFee();
-      expect(fee).to.equal(ethers.utils.parseEther("0.000001"));
+      expect(fee).to.equal(ethers.parseEther("0.000001"));
     });
   });
 
@@ -52,7 +51,7 @@ describe("AMDNFTMarketplace", function () {
     it("Should revert if the price is zero", async function () {
       const { marketplace, recipient, metadataURI } = await loadFixture(deployMarketplaceFixture);
       await marketplace.mintNFT(recipient.address, metadataURI, 0);
-      await expect(marketplace.connect(recipient).listNFT(1, 0)).to.be.revertedWith("PriceGreaterThanZero");
+      await expect(marketplace.connect(recipient).listNFT(1, 0)).to.be.revertedWithCustomError(marketplace, "PriceGreaterThanZero");
     });
   });
 
@@ -62,7 +61,7 @@ describe("AMDNFTMarketplace", function () {
       await marketplace.mintNFT(recipient.address, metadataURI, initialPrice);
       await marketplace.connect(recipient).listNFT(1, initialPrice);
 
-      const totalCost = initialPrice.add(ethers.utils.parseEther("0.000001"));
+      const totalCost = initialPrice.add(ethers.parseEther("0.000001"));
       await marketplace.connect(buyer).buyNFT(1, { value: totalCost });
 
       expect(await marketplace.ownerOf(1)).to.equal(buyer.address);
@@ -72,7 +71,7 @@ describe("AMDNFTMarketplace", function () {
       const { marketplace, buyer, recipient, initialPrice, metadataURI } = await loadFixture(deployMarketplaceFixture);
       await marketplace.mintNFT(recipient.address, metadataURI, initialPrice);
       
-      await expect(marketplace.connect(buyer).buyNFT(1, { value: initialPrice })).to.be.revertedWith("NFTNotForSale");
+      await expect(marketplace.connect(buyer).buyNFT(1, { value: initialPrice })).to.be.revertedWithCustomError(marketplace, "NFTNotForSale");
     });
 
     it("Should revert if insufficient funds are sent", async function () {
@@ -80,7 +79,7 @@ describe("AMDNFTMarketplace", function () {
       await marketplace.mintNFT(recipient.address, metadataURI, initialPrice);
       await marketplace.connect(recipient).listNFT(1, initialPrice);
 
-      await expect(marketplace.connect(buyer).buyNFT(1, { value: initialPrice })).to.be.revertedWith("InsufficientFunds");
+      await expect(marketplace.connect(buyer).buyNFT(1, { value: initialPrice })).to.be.revertedWithCustomError(marketplace, "InsufficientFunds");
     });
 
     it("Should revert if the buyer is the owner of the NFT", async function () {
@@ -88,8 +87,8 @@ describe("AMDNFTMarketplace", function () {
       await marketplace.mintNFT(recipient.address, metadataURI, initialPrice);
       await marketplace.connect(recipient).listNFT(1, initialPrice);
 
-      const totalCost = initialPrice.add(ethers.utils.parseEther("0.000001"));
-      await expect(marketplace.connect(recipient).buyNFT(1, { value: totalCost })).to.be.revertedWith("CannotBuyOwnNFT");
+      const totalCost = initialPrice.add(ethers.parseEther("0.000001"));
+      await expect(marketplace.connect(recipient).buyNFT(1, { value: totalCost })).to.be.revertedWithCustomError(marketplace, "CannotBuyOwnNFT");
     });
   });
 
@@ -107,7 +106,7 @@ describe("AMDNFTMarketplace", function () {
       const { marketplace, recipient, buyer, initialPrice, metadataURI } = await loadFixture(deployMarketplaceFixture);
       await marketplace.mintNFT(recipient.address, metadataURI, initialPrice);
 
-      await expect(marketplace.connect(buyer).transferNFT(1, buyer.address)).to.be.revertedWith("NotOwner");
+      await expect(marketplace.connect(buyer).transferNFT(1, buyer.address)).to.be.revertedWithCustomError(marketplace, "NotOwner");
     });
   });
 
@@ -116,10 +115,10 @@ describe("AMDNFTMarketplace", function () {
       const { marketplace, owner } = await loadFixture(deployMarketplaceFixture);
 
       await marketplace.pause();
-      await expect(marketplace.mintNFT(owner.address, "URI", ethers.utils.parseEther("0.01"))).to.be.revertedWith("Pausable: paused");
+      await expect(marketplace.mintNFT(owner.address, "URI", ethers.parseEther("0.01"))).to.be.revertedWithCustomError(marketplace, "Pausable: paused");
 
       await marketplace.unpause();
-      await marketplace.mintNFT(owner.address, "URI", ethers.utils.parseEther("0.01"));
+      await marketplace.mintNFT(owner.address, "URI", ethers.parseEther("0.01"));
     });
   });
 });
