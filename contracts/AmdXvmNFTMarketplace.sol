@@ -58,7 +58,7 @@ contract AmdXvmNFTMarketplace is ERC721("Amd Xvm", "AXVM"), Ownable(msg.sender),
         address _recipient,
         string memory _metadataURI,
         uint256 _price
-    ) public onlyOwner returns (uint256) {
+    ) public onlyOwner whenNotPaused returns (uint256) {
         _tokenIds++;
         uint256 newItemId = _tokenIds;
 
@@ -162,4 +162,6 @@ contract AmdXvmNFTMarketplace is ERC721("Amd Xvm", "AXVM"), Ownable(msg.sender),
     // Events
     event NFTListed(uint256 indexed tokenId, uint256 price);
     event NFTSold(uint256 indexed tokenId, address indexed buyer, uint256 price);
+    event NFTMinted(uint indexed tokenId);
+    event NFTTransfer(uint indexed tokenId);
 }

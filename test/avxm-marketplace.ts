@@ -61,7 +61,7 @@ describe("AmdXvmNFTMarketplace", function () {
       await marketplace.mintNFT(recipient.address, metadataURI, initialPrice);
       await marketplace.connect(recipient).listNFT(1, initialPrice);
 
-      const totalCost = initialPrice.add(ethers.parseEther("0.000001"));
+      const totalCost = initialPrice + ethers.parseEther("0.000001");
       await marketplace.connect(buyer).buyNFT(1, { value: totalCost });
 
       expect(await marketplace.ownerOf(1)).to.equal(buyer.address);
@@ -87,7 +87,7 @@ describe("AmdXvmNFTMarketplace", function () {
       await marketplace.mintNFT(recipient.address, metadataURI, initialPrice);
       await marketplace.connect(recipient).listNFT(1, initialPrice);
 
-      const totalCost = initialPrice.add(ethers.parseEther("0.000001"));
+      const totalCost = initialPrice + ethers.parseEther("0.000001");
       await expect(marketplace.connect(recipient).buyNFT(1, { value: totalCost })).to.be.revertedWithCustomError(marketplace, "CannotBuyOwnNFT");
     });
   });
@@ -115,7 +115,8 @@ describe("AmdXvmNFTMarketplace", function () {
       const { marketplace, owner } = await loadFixture(deployMarketplaceFixture);
 
       await marketplace.pause();
-      await expect(marketplace.mintNFT(owner.address, "URI", ethers.parseEther("0.01"))).to.be.revertedWithCustomError(marketplace, "Pausable: paused");
+
+      await expect(marketplace.mintNFT(owner.address, "URI", ethers.parseEther("0.01"))).to.be.revertedWithCustomError(marketplace, "EnforcedPause");
 
       await marketplace.unpause();
       await marketplace.mintNFT(owner.address, "URI", ethers.parseEther("0.01"));
