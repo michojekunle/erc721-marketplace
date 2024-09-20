@@ -3,7 +3,7 @@ import { loadFixture } from "@nomicfoundation/hardhat-toolbox/network-helpers";
 const { expect } = require("chai");
 const { ethers } = require("hardhat");
 
-describe("AMDNFTMarketplace", function () {
+describe("AmdXvmNFTMarketplace", function () {
   async function deployMarketplaceFixture() {
     const [owner, buyer, recipient, otherAccount] = await ethers.getSigners();
     const AmdXvmNFTMarketplace = await ethers.getContractFactory("AmdXvmNFTMarketplace");
