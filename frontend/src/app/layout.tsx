@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import { Providers } from './providers'
 import "./globals.css";
+import "@rainbow-me/rainbowkit/styles.css";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
