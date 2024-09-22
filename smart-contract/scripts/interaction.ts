@@ -21,7 +21,7 @@ async function main() {
     .connect(owner)
     .mintNFT(
       owner.address,
-      "ipfs://QmTknsxMDZv76fTKoEhXdTgG7kS5dfJw6xGMRv8ukLw1xn",
+      "ipfs://QmfAYUMMB7NE9NQk2P91GbyWrEm1XWTGSoCcTFhZDZgFwD",
       hre.ethers.parseEther("0.003")
     );
 
